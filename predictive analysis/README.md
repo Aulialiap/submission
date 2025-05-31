@@ -71,9 +71,9 @@ Analisis univariat dilakukan dengan menampilkan histogram untuk setiap fitur num
 ### Multivariate Analysis
 Selanjutnya, analisis multivariat dilakukan dengan menggunakan pairplot untuk mengamati hubungan antar fitur numerik sekaligus hubungan fitur dengan variabel target. Visualisasi ini memperlihatkan pola distribusi bersama dan potensi korelasi antara variabel-variabel dalam dataset. Untuk menguatkan hasil ini, dibuat pula correlation matrix dalam bentuk heatmap yang menampilkan nilai korelasi antar fitur numerik secara kuantitatif sebagai berikut 
 
-![image](https://github.com/user-attachments/assets/4d9c6e39-7838-45ab-a0f2-765b15faece9)
+![image](https://github.com/user-attachments/assets/0bac0b4e-32cf-4fed-9db5-6419ee7b6df6)
 
-![image](https://github.com/user-attachments/assets/f0df45af-86bf-4085-b6d4-d76a9d122781)
+![image](https://github.com/user-attachments/assets/72f9fec7-41b7-40e5-8290-0d728a6b1339)
 
 ## Data Preparation
 Tahapan bertujuan untuk menyiapkan data agar optimal untuk proses pelatihan model. Tahapan yang dilakukan meliputi :
@@ -93,36 +93,65 @@ Fitur yang dipilih setelah melihat korelasi terkuat dengan outcome adalah ['Gluc
 Pada tahap ini, dilakukan proses pengembangan dan evaluasi model machine learning untuk menyelesaikan permasalahan prediksi Outcome pada dataset anemia. Tiga algoritma pembelajaran yang digunakan adalah K-Nearest Neighbors (KNN), Random Forest Regressor, dan AdaBoost Regressor (Boosting). Setiap model dibangun dan diuji menggunakan data hasil split sebelumnya, dan performanya dibandingkan menggunakan metrik Mean Squared Error (MSE) pada data pelatihan.
 
 ### 1. KNN 
-Model KNN yang digunakan adalah KNeighborsRegressor dengan parameter n_neighbors=10. Model ini bekerja dengan menghitung jarak Euclidean antara titik data baru dan tetangga terdekat dari data pelatihan, lalu menghasilkan prediksi berdasarkan rata-rata nilai target dari tetangga tersebut.Parameter penting yang digunakan adalah n_neighbors=10 yang artinya prediksi akan didasarkan pada 10 tetangga terdekat. 
+Model KNN yang digunakan adalah KNeighborsRegressor dengan parameter n_neighbors=10. Model ini bekerja dengan menghitung jarak Euclidean antara titik data baru dan tetangga terdekat dari data pelatihan, lalu menghasilkan prediksi berdasarkan rata-rata nilai target dari tetangga tersebut.
 
 Kelebihan:
 - Sederhana dan mudah diimplementasikan.
 - Dapat digunakan untuk klasifikasi dan regresi.
+- Tidak memiliki proses pelatihan eksplisit sehingga cepat saat training.
 
 Kekurangan:
 - Sensitif terhadap skala dan outlier.
 - Kurang efisien untuk dataset besar karena perlu menghitung jarak ke seluruh data latih setiap kali prediksi.
+- Performa bisa buruk jika data memiliki dimensi tinggi (curse of dimensionality).
 
 ### 2. Random Forest 
-Model kedua yang digunakan adalah RandomForestRegressor, yaitu metode ensemble yang membangun banyak pohon keputusan dan menggabungkan hasil prediksinya. Parameter yang digunakan beberapa diantaranya :
+Model kedua yang digunakan adalah RandomForestRegressor, yaitu metode ensemble yang membangun banyak pohon keputusan dan menggabungkan hasil prediksinya. Random Forest bekerja dengan membangun banyak decision tree secara acak, dan menggabungkan hasil prediksinya (dengan voting untuk klasifikasi atau rata-rata untuk regresi). Random Forest menghasilkan model yang lebih robust dan tidak terlalu terikat pada noise atau pola spesifik dari data pelatihan sehingga ini membuatnya relatif tahan terhadap overfitting. Parameter yang digunakan beberapa diantaranya :
 - n_estimator: jumlah trees (pohon) di forest. Di sini kita set n_estimator=50.
 - max_depth: kedalaman atau panjang pohon. Ia merupakan ukuran seberapa banyak pohon dapat membelah (splitting) untuk membagi setiap node ke dalam jumlah pengamatan yang diinginkan.
 - random_state: digunakan untuk mengontrol random number generator yang digunakan.
 - n_jobs: jumlah job (pekerjaan) yang digunakan secara paralel. Ia merupakan komponen untuk mengontrol thread atau proses yang berjalan secara paralel. n_jobs=-1 artinya semua proses berjalan secara paralel.
 
+Kelebihan : 
+- Dapat menangani data dalam jumlah besar dan fitur yang kompleks.
+- Mampu menahan overfitting karena adanya pemilihan fitur secara acak saat membangun model.
+- Memberikan estimasi pentingnya fitur (feature importance).
+
+Kekurangan : 
+- Interpretasi hasil lebih sulit dibanding model sederhana seperti KNN.
+- Model bisa menjadi besar dan lambat saat proses inferensi jika jumlah pohon sangat banyak.
+- Tidak seefisien boosting dalam menangani error kecil karena pendekatan rata-ratanya.
 
 ### 3. Boosting Algorithm
-Model ketiga menggunakan AdaBoostRegressor, yaitu metode ensemble berbasis boosting yang melatih model secara bertahap, di mana setiap model baru difokuskan pada kesalahan prediksi model sebelumnya. Beberapa parameter yang digunakan : 
+Model ketiga menggunakan AdaBoostRegressor, yaitu metode ensemble berbasis boosting yang melatih model secara bertahap, di mana setiap model baru difokuskan pada kesalahan prediksi model sebelumnya. AdaBoost secara eksplisit berfokus pada data yang salah diprediksi. Model berikutnya akan lebih memperhatikan data yang sebelumnya sulit diprediksi dan akan berulang terus hingga jumlah model tertentu tercapai atau error menyusut. Model ini sangat efektif untuk memperbaiki kesalahan prediksi bertahap. Namun, hal ini juga membuatnya lebih rentan terhadap outlier, karena outlier sering kali terus-menerus salah dan diberi bobot tinggi. Beberapa parameter yang digunakan : 
 - learning_rate=0.05: mengatur kontribusi setiap model terhadap prediksi akhir.
 - random_state=55: untuk memastikan reprodusibilitas hasil.
 
+Kelebihan : 
+- Fokus pada data yang sulit diprediksi (berat kesalahan tinggi), sehingga dapat meningkatkan akurasi model secara bertahap.
+- Sering kali menghasilkan performa yang lebih baik dibandingkan model tunggal.
+- Cocok untuk menangani data dengan noise moderat.
+
+Kekurangan : 
+- Rentan terhadap data outlier karena memberi bobot lebih tinggi pada kesalahan.
+- Lebih kompleks dan lambat dibanding model seperti KNN dan Random Forest.
+- Perlu penyesuaian parameter yang hati-hati agar tidak overfitting atau underfitting.
+
 
 ## Evaluation
-Evaluasi dilakukan menggunakan metrik Mean Squared Error (MSE) pada data pelatihan. Hasil MSE masing-masing model disimpan dalam sebuah dataframe untuk perbandingan. Model dengan MSE terendah pada data pelatihan menunjukkan kemampuan terbaik dalam merepresentasikan data yang ada.
+Evaluasi dilakukan menggunakan metrik Mean Squared Error (MSE) pada data pelatihan. Hasil MSE masing-masing model disimpan dalam sebuah dataframe untuk perbandingan. Model dengan MSE terendah pada data pelatihan menunjukkan kemampuan terbaik dalam merepresentasikan data yang ada. 
 
 ![image](https://github.com/user-attachments/assets/14d84ba3-61bf-40da-b8d1-d5a96400f56f)
 
-MSE mengukur rata-rata kuadrat dari selisih antara nilai prediksi dan nilai aktual. Semakin kecil, semakin baik performa model. KNN memiliki performa terbaik dengan MSE terkecil, menunjukkan hasil prediksi yang paling akurat dan perbedaan kecil antara nilai MSE di data train dan test menandakan model tidak overfitting. Random forest dan Boosting masih layak dipertimbangkan, namun akurasinya lebih rendah dari KNN.
+Evaluasi performa model dilakukan menggunakan metrik Mean Squared Error (MSE) pada data pelatihan dan pengujian. MSE adalah metrik regresi yang mengukur rata-rata kuadrat dari selisih antara nilai aktual dan nilai prediksi. Metrik ini dipilih karena MSE mengukur rata-rata dari kuadrat error antara nilai prediksi dan nilai sebenarnya. Karena error dikuadratkan, MSE memberikan penalti lebih besar terhadap kesalahan prediksi yang besar dibandingkan kesalahan kecil, menjadikannya metrik yang sensitif terhadap outlier sehingga metrik ini mudah dihitung dan memberikan indikasi seberapa besar kesalahan model secara kuantitatif.
+
+![image](https://github.com/user-attachments/assets/82a992ea-d530-45ad-a5ed-eb981a8c456b)
+
+Keterangan:
+
+![image](https://github.com/user-attachments/assets/9946fb9c-bece-4b96-b6fa-e4fd06f3f4b4)
+
+Semakin kecil, semakin baik performa model. KNN memiliki performa terbaik dengan MSE terkecil, menunjukkan hasil prediksi yang paling akurat dan perbedaan kecil antara nilai MSE di data train dan test menandakan model tidak overfitting. Random forest dan Boosting masih layak dipertimbangkan, namun akurasinya lebih rendah dari KNN.
 
 ![image](https://github.com/user-attachments/assets/61e78bcb-dace-4c55-8696-966162dc53d7)
 
