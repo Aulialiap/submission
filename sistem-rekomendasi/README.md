@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Sistem rekomendasi buku menjadi solusi penting untuk membantu pengguna menavigasi informasi yang melimpah dan meningkatkan pengalaman membaca. 
+Sistem rekomendasi buku menjadi solusi penting untuk membantu pengguna menavigasi informasi yang melimpah dan meningkatkan pengalaman membaca[[1]](https://www.unesco.org/en/literacy). 
 Dengan menggabungkan metode content-based filtering (berdasarkan kemiripan konten buku), proyek ini membangun sistem rekomendasi 
 yang mampu menyarankan buku secara lebih personal dan relevan. Proyek ini menggunakan dataset publik dari Kaggle yang mencakup data buku, pengguna, dan rating. 
 Dengan pendekatan berbasis machine learning dan deep learning, sistem ini tidak hanya membantu pengguna menemukan buku yang sesuai, 
