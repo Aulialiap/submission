@@ -38,17 +38,36 @@ Berikut deskripsi masing-masing fitur pada dataset :
 - Publisher : Nama penerbit buku.
 - Image-URL-S, Image-URL-M, Image-URL-L : URL gambar sampul buku dalam tiga ukuran.
 
+Terlihat terdapat beberapa missing value pada data awal pada dataset book.csv
+
+![image](https://github.com/user-attachments/assets/344a8e48-d2ac-4f49-9603-9f1631a49945)
+
+
 ### Users.csv
 ![image](https://github.com/user-attachments/assets/acdece54-1ec0-4887-8380-256daf5608a2)
 - User-ID : berisi ID unik pengguna
 - Location : berisi data lokasi pengguna
 - Age : berisi data usia pengguna
 
+Terlihat tidak ada missing value pada data awal pada dataset users.csv
+
+![image](https://github.com/user-attachments/assets/265bb5f7-9a54-4440-91ae-41439976830c)
+
+
 ### Rating.csv
 ![image](https://github.com/user-attachments/assets/e6d7dee9-3dba-4b84-8a61-fdcfaf28b40b)
 - User-ID : berisi ID unik pengguna
 - ISBN : berisi kode ISBN buku yang diberi rating oleh pengguna
 - Book-Rating : berisi nilai rating yang diberikan oleh pengguna berkisar antara 0-10
+
+Terlihat tidak ada missing value pada data awal pada dataset rating.csv
+
+![image](https://github.com/user-attachments/assets/c177153a-dcac-4660-9118-459b6282690b)
+
+Namun pada distribusi data rating.csv terdapat nilai rating 0 yang berarti rating implisit (pengguna telah melihat atau memiliki buku tapi tidak memberi rating eksplisit) sehingga perlu dibersihkan untuk menghindari bias
+
+![image](https://github.com/user-attachments/assets/2059a6ba-50b7-46c4-99f5-150e81d3fa17)
+
 
 ## Data Preparation
 Pada tahap ini, dilakukan beberapa langkah data preparation untuk memastikan kualitas data yang baik sebelum membangun sistem rekomendasi. Yang dilakukan diantaranya 
