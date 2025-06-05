@@ -96,16 +96,13 @@ Diperiksa adanya data duplikat pada hasil penggabungan dataset dan akan dihapus 
 
 ### **Menangani Missing Values**
 Data pada kolom Age ditemukan memiliki nilai kosong. Nilai yang tidak valid dihapus atau diisi dengan median untuk menjaga distribusi data tetap wajar. Seperti pada variabel Age yang menerapkan pengisian menggunakan median usia pengguna nya. Ada kemungkinan dalam data hasil merge (ratings + books), sebagian ISBN tidak ditemukan datanya di books.csv, sehingga seluruh informasi tentang buku (judul, penulis, tahun, penerbit) jadi kosong semua. Sehingga semua kolom informasi buku kosong, maka baris itu tidak bisa digunakan untuk sistem rekomendasi (tidak ada data konten) dan Usia pengguna ditangani dengan median agar tidak bias.
-all_book.dropna(subset=['Book-Title', 'Book-Author', 'Year-Of-Publication', 'Publisher'], inplace=True)
-all_book['Age'] = all_book['Age'].fillna(all_book['Age'].median())
-all_book.drop(all_book[all_book["Book-Rating"] == 0].index, inplace=True)
 
 ![image](https://github.com/user-attachments/assets/6ddb8062-52fd-4577-b010-652fc13b78eb)
 
 ### **TF-IDF Vectorization**
-Untuk sistem rekomendasi berbasis konten, kolom Book-Title dikonversi menjadi vektor numerik menggunakan teknik TF-IDF agar dapat dibandingkan menggunakan cosine similarity.
+Untuk sistem rekomendasi berbasis konten, kolom author, book-titile, publisher dikonversi menjadi vektor numerik menggunakan teknik TF-IDF agar dapat dibandingkan menggunakan cosine similarity.
 
-![image](https://github.com/user-attachments/assets/69dd3ed7-19aa-49a1-8861-e89ceaef3155)
+![image](https://github.com/user-attachments/assets/04712c91-4c49-47ba-a745-9668ce1ab718)
 
 Sebelum melakukan proses vektorisasi, nilai kosong (NaN) pada kolom penulis diisi terlebih dahulu dengan string kosong agar tidak menyebabkan error. Kemudian, TfidfVectorizer dari scikit-learn diinisialisasi. Setelah itu, dilakukan proses fit_transform pada kolom penulis untuk menghasilkan matriks TF-IDF, yaitu matriks berdimensi (jumlah buku × jumlah kata unik). Hasil inilah yang akan digunakan untuk menghitung kemiripan antar buku dengan cosine similarity. Fungsi ini menghitung kemiripan antar setiap pasangan buku berdasarkan vektor TF-IDF yang telah dihasilkan sebelumnya. Matriks cosine similarity ini kemudian disimpan dalam bentuk DataFrame, dengan baris dan kolom diberi label nama judul buku. Struktur ini memudahkan proses pencarian dan interpretasi ketika sistem ingin merekomendasikan buku yang mirip dengan buku tertentu.
 
@@ -191,6 +188,18 @@ Berdasarkan grafik hasil pelatihan model, terlihat bahwa nilai RMSE pada data tr
 Berdasarkan hasil evaluasi yang telah dilakukan, sistem terbukti memberikan rekomendasi yang akurat, baik dari sisi prediksi rating (dengan metrik RMSE) 
 
 ![image](https://github.com/user-attachments/assets/dbe267b4-6497-4bfd-ad78-d236c272eb95)
+
+Untuk mengevaluasi model Content-Based Filtering, digunakan metrik evaluasi berbasis ranking yang umum digunakan pada sistem rekomendasi, yaitu:
+- Precision@K
+- Recall@K
+- F1-Score@K
+- NDCG@K (Normalized Discounted Cumulative Gain)
+
+Evaluasi dilakukan terhadap 20 pengguna yang dipilih secara acak. Sistem memberikan Top-5 rekomendasi untuk masing-masing pengguna berdasarkan kemiripan konten (gabungan judul, penulis, dan penerbit dengan hasil berikut
+
+![image](https://github.com/user-attachments/assets/d90a15ed-c87b-4565-a808-f5b8e0688dd5)
+
+Hasil tersebut menunjukkan bahwa sistem Content-Based Filtering cukup baik dalam memberikan rekomendasi yang relevan dan memprioritaskan buku-buku yang sesuai preferensi pengguna dalam urutan atas.
 
 Sistem secara langsung menanggapi pernyataan masalah utama, yaitu kesulitan pengguna dalam menemukan buku yang sesuai dengan preferensi mereka. Dengan adanya dua pendekatan—Content-Based dan Collaborative Filtering—pengguna dapat menerima rekomendasi yang lebih relevan baik berdasarkan kemiripan konten maupun berdasarkan pola perilaku pengguna lain.
 
