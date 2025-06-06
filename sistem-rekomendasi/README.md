@@ -74,6 +74,7 @@ Pada ketiga dataset tersebut juga tidak terlihat adanya duplikasi data yang bera
 
 ## Data Preparation
 Pada tahap ini, dilakukan beberapa langkah data preparation untuk memastikan kualitas data yang baik sebelum membangun sistem rekomendasi. Yang dilakukan diantaranya 
+
 ### **Menggabungkan Dataset**
 Dataset Ratings.csv digabungkan dengan Books.csv dan Users.csv berdasarkan kolom ISBN dan User-ID untuk membentuk satu dataset terpadu yang berisi informasi pengguna, buku, dan rating. Penggabungan ini penting untuk memungkinkan analisis menyeluruh dan membangun sistem rekomendasi berbasis interaksi. Sehingga didapat 
   - Jumlah seluruh data buku berdasarkan ISBN : 341765
@@ -82,25 +83,27 @@ Dataset Ratings.csv digabungkan dengan Books.csv dan Users.csv berdasarkan kolom
   - Jumlah user  yang memberi rating: 105283
   - Jumlah buku  yang diberi rating: 340556
 
-Namun setelah penggabungan terlihat terdapat beberapa missing value yang cukup besar. Ada kemungkinan dalam data hasil merge (ratings + books), sebagian ISBN tidak ditemukan datanya di books.csv, sehingga seluruh informasi tentang buku (judul, penulis, tahun, penerbit) jadi kosong semua. Sehingga semua kolom informasi buku kosong, maka baris itu tidak bisa digunakan untuk sistem rekomendasi (tidak ada data konten) dan akan dibersihkan
+![image](https://github.com/user-attachments/assets/734b5a4d-5925-4451-868a-de3e4916a762)
 
-![image](https://github.com/user-attachments/assets/f6781844-2dba-47be-8fd7-6265dacfd3fb)
-
+Dengan menggabungkan ketiga file ini, kita mendapatkan satu DataFrame besar (all_book) yang menjadi sumber data utama untuk sistem rekomendasi dan menghasilkan satu dataset terpadu yang berisi informasi pengguna, buku, dan rating—sehingga analisis dan pemodelan rekomendasi dapat memanfaatkan ketiganya secara bersamaan.
 
 ### **Menghapus Nilai Rating Nol**
 Rating dengan nilai 0 dianggap sebagai implicit feedback (pengguna telah melihat buku tetapi tidak memberikan penilaian eksplisit) dan terdapat indikasi missing value karena kesenjangan jumlah yang begitu besar. Karena proyek ini berfokus pada sistem rekomendasi berbasis explicit feedback, maka entri dengan rating 0 dihapus untuk meningkatkan keakuratan model.
 
 ### **Menghapus Duplikasi**
-Diperiksa adanya data duplikat pada hasil penggabungan dataset dan akan dihapus untuk menghindari bias dalam model dan evaluasi.
+Pada tahap ini, dibuat salinan dari dataset utama all_book ke dalam dataframe bernama preparation. Kemudian, dilakukan penghapusan duplikasi berdasarkan kolom ISBN dengan perintah :
+
 ![image](https://github.com/user-attachments/assets/f416bdcc-5886-4d81-a01d-27417d12e945)
 
+Langkah ini bukan merupakan penghapusan duplikasi umum di seluruh dataset, melainkan bertujuan untuk memastikan bahwa setiap buku hanya direpresentasikan satu kali saat dilakukan proses TF-IDF dan perhitungan cosine similarity. Jika satu ISBN muncul lebih dari satu kali, maka dapat menyebabkan bias dalam representasi konten dan penghitungan kemiripan antar buku.
+
 ### **Menangani Missing Values**
-Data pada kolom Age ditemukan memiliki nilai kosong. Nilai yang tidak valid dihapus atau diisi dengan median untuk menjaga distribusi data tetap wajar. Seperti pada variabel Age yang menerapkan pengisian menggunakan median usia pengguna nya. Ada kemungkinan dalam data hasil merge (ratings + books), sebagian ISBN tidak ditemukan datanya di books.csv, sehingga seluruh informasi tentang buku (judul, penulis, tahun, penerbit) jadi kosong semua. Sehingga semua kolom informasi buku kosong, maka baris itu tidak bisa digunakan untuk sistem rekomendasi (tidak ada data konten) dan Usia pengguna ditangani dengan median agar tidak bias.
+Menghapus dan membersihkan beberapa missing value pada fitur yang akan digunakan 
 
 ![image](https://github.com/user-attachments/assets/6ddb8062-52fd-4577-b010-652fc13b78eb)
 
 ### **TF-IDF Vectorization**
-Untuk sistem rekomendasi berbasis konten, kolom author, book-titile, publisher dikonversi menjadi vektor numerik menggunakan teknik TF-IDF agar dapat dibandingkan menggunakan cosine similarity.
+Untuk sistem rekomendasi berbasis konten, kolom author, book-titile, publisher yang digabungkan dalam satu dataframe baru bernama content dan dikonversi menjadi vektor numerik menggunakan teknik TF-IDF agar dapat dibandingkan menggunakan cosine similarity.
 
 ![image](https://github.com/user-attachments/assets/04712c91-4c49-47ba-a745-9668ce1ab718)
 
@@ -118,6 +121,15 @@ Sebelum melakukan proses vektorisasi, nilai kosong (NaN) pada kolom penulis diis
 - Dataset kemudian dibagi menjadi dua subset: data pelatihan dan data validasi menggunakan rasio 80:20 untuk menguji performa model pada data yang belum pernah dilihat.
 
 ![image](https://github.com/user-attachments/assets/77f2e55d-37dd-40ba-8b7c-d54441c4ee93)
+
+Selain itu, dilakukan penyaringan pada dataset all_book untuk hanya menyertakan buku-buku populer yang dianggap relevan. Hal ini bertujuan untuk mengurangi noise dari buku-buku yang sangat jarang diberi rating, yang dapat menyebabkan data menjadi terlalu sparse dan menurunkan performa model. Penyaringan ini dilakukan dengan cara :
+- Menghitung jumlah total rating untuk setiap judul buku.
+- Menyaring hanya buku dengan jumlah rating di atas ambang batas tertentu sebagai top_books
+- Dataset all_book kemudian difilter menggunakan :
+
+![image](https://github.com/user-attachments/assets/f1527f95-a3b6-4ac9-bd54-394af6bff5f7)
+
+Dengan hanya mempertahankan top_books, model dapat fokus pada item yang memiliki informasi interaksi cukup kaya untuk dipelajari.
 
 ## Modeling and Result
 Pada tahap modeling, sistem rekomendasi dikembangkan menggunakan pendekatan utama content based filtering. 
