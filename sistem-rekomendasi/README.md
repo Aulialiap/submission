@@ -87,15 +87,15 @@ Dataset Ratings.csv digabungkan dengan Books.csv dan Users.csv berdasarkan kolom
 
 Dengan menggabungkan ketiga file ini, kita mendapatkan satu DataFrame besar (all_book) yang menjadi sumber data utama untuk sistem rekomendasi dan menghasilkan satu dataset terpadu yang berisi informasi pengguna, buku, dan rating—sehingga analisis dan pemodelan rekomendasi dapat memanfaatkan ketiganya secara bersamaan.
 
-### **Menghapus Nilai Rating Nol**
-Rating dengan nilai 0 dianggap sebagai implicit feedback (pengguna telah melihat buku tetapi tidak memberikan penilaian eksplisit) dan terdapat indikasi missing value karena kesenjangan jumlah yang begitu besar. Karena proyek ini berfokus pada sistem rekomendasi berbasis explicit feedback, maka entri dengan rating 0 dihapus untuk meningkatkan keakuratan model.
-
 ### **Menangani Missing Values**
 Menghapus dan membersihkan beberapa missing value pada fitur yang akan digunakan. Menghapus dan drop beberapa missing value dan pada variabel age yang diisi dengan median agar tidak bias.
 
 ![image](https://github.com/user-attachments/assets/263fe48f-a8c2-4a35-bb04-8caf542061d5)
 
 ![image](https://github.com/user-attachments/assets/6ddb8062-52fd-4577-b010-652fc13b78eb)
+
+### **Menghapus Nilai Rating Nol**
+Rating dengan nilai 0 dianggap sebagai implicit feedback (pengguna telah melihat buku tetapi tidak memberikan penilaian eksplisit) dan terdapat indikasi missing value karena kesenjangan jumlah yang begitu besar. Karena proyek ini berfokus pada sistem rekomendasi berbasis explicit feedback, maka entri dengan rating 0 dihapus untuk meningkatkan keakuratan model.
 
 ### **Menghapus Duplikasi**
 Pada tahap ini, dibuat salinan dari dataset utama all_book ke dalam dataframe bernama preparation. Kemudian, dilakukan penghapusan duplikasi berdasarkan kolom ISBN dengan perintah :
