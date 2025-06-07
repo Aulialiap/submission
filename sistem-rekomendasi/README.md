@@ -49,7 +49,7 @@ Terlihat terdapat beberapa missing value pada data awal pada dataset book.csv
 - Location : berisi data lokasi pengguna
 - Age : berisi data usia pengguna
 
-Terlihat tidak ada missing value pada data awal pada dataset users.csv
+Terlihat ada missing value pada data awal pada dataset users.csv dari persebaran dataset yang tidak merata 
 
 ![image](https://github.com/user-attachments/assets/265bb5f7-9a54-4440-91ae-41439976830c)
 
@@ -90,6 +90,13 @@ Dengan menggabungkan ketiga file ini, kita mendapatkan satu DataFrame besar (all
 ### **Menghapus Nilai Rating Nol**
 Rating dengan nilai 0 dianggap sebagai implicit feedback (pengguna telah melihat buku tetapi tidak memberikan penilaian eksplisit) dan terdapat indikasi missing value karena kesenjangan jumlah yang begitu besar. Karena proyek ini berfokus pada sistem rekomendasi berbasis explicit feedback, maka entri dengan rating 0 dihapus untuk meningkatkan keakuratan model.
 
+### **Menangani Missing Values**
+Menghapus dan membersihkan beberapa missing value pada fitur yang akan digunakan. Menghapus dan drop beberapa missing value dan pada variabel age yang diisi dengan median agar tidak bias.
+
+![image](https://github.com/user-attachments/assets/263fe48f-a8c2-4a35-bb04-8caf542061d5)
+
+![image](https://github.com/user-attachments/assets/6ddb8062-52fd-4577-b010-652fc13b78eb)
+
 ### **Menghapus Duplikasi**
 Pada tahap ini, dibuat salinan dari dataset utama all_book ke dalam dataframe bernama preparation. Kemudian, dilakukan penghapusan duplikasi berdasarkan kolom ISBN dengan perintah :
 
@@ -97,10 +104,6 @@ Pada tahap ini, dibuat salinan dari dataset utama all_book ke dalam dataframe be
 
 Langkah ini bukan merupakan penghapusan duplikasi umum di seluruh dataset, melainkan bertujuan untuk memastikan bahwa setiap buku hanya direpresentasikan satu kali saat dilakukan proses TF-IDF dan perhitungan cosine similarity. Jika satu ISBN muncul lebih dari satu kali, maka dapat menyebabkan bias dalam representasi konten dan penghitungan kemiripan antar buku.
 
-### **Menangani Missing Values**
-Menghapus dan membersihkan beberapa missing value pada fitur yang akan digunakan 
-
-![image](https://github.com/user-attachments/assets/6ddb8062-52fd-4577-b010-652fc13b78eb)
 
 ### **TF-IDF Vectorization**
 Untuk sistem rekomendasi berbasis konten, kolom author, book-titile, publisher yang digabungkan dalam satu dataframe baru bernama content dan dikonversi menjadi vektor numerik menggunakan teknik TF-IDF agar dapat dibandingkan menggunakan cosine similarity.
